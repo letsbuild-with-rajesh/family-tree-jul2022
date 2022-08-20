@@ -1,0 +1,14 @@
+@mixin flex-center{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+@mixin bg-black {
+	background-color: black;
+}
+
+@mixin border-black {
+	border: 1px solid black;
+}

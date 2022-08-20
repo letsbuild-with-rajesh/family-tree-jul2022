@@ -1,13 +1,14 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import TreeNode from '../components/TreeNode'
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Family Tree</title>
         <meta name="description" content="Family Tree App" />
       </Head>
+			<TreeNode/>
     </div>
   )
 }
