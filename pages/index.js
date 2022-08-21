@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import '../utils/firebaseSetup'
 import TreeNode from '../components/TreeNode'
 
 export default function Home() {

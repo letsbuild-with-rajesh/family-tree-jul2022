@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import MemberDetailsPopper from '../MemberDetailsPopper';
 import OptionsMenu from '../OptionsMenu';
 import styles from '../../styles/TreeNode.module.scss';
+import { deleteMember } from '../MemberDetailsPopper/utils';
 import { getRandomColor } from './utils';
 
 const TreeNode = (props) => {
-	const { data } = props;
-	const childrenCount = data.children.length;
+	const { data, membersMap } = props;
+	const childrenCount = data?.child_ids?.length;
 
 	const [expanded, setExpanded] = useState(true);
 	const [randomColor, setRandomColor] = useState({});
+	const [selectedMoreOption, setSelectedMoreOption] = useState('');
+	const [showMemberDetailsPopup, setShowMemberDetailsPopup] = useState({open: false, type: ''});
 	const hasChild = childrenCount > 0;
 	const hasMoreThanOneChild = childrenCount > 1;
 
@@ -16,7 +20,24 @@ const TreeNode = (props) => {
 		setRandomColor(getRandomColor());
 	}, []);
 
+	const optionHandler = (option = 'clear') => {
+		setSelectedMoreOption(option === 'clear' ? '' : option);
+		if (['add', 'edit'].includes(option)) {
+			setShowMemberDetailsPopup({open: true, type: option});
+		}
+		if (option === 'delete') {
+			deleteMember(data.id);
+		}
+	}
+
 	return (
+		<>
+		<MemberDetailsPopper
+			open={showMemberDetailsPopup.open}
+			onClose={()=> setShowMemberDetailsPopup({open: false, type: ''})}
+			type={showMemberDetailsPopup.type}
+			sourceMember={data}
+			/>
 		<table className={styles.container}>
 			<tbody>
 				<tr className={styles.contentContainer}>
@@ -26,7 +47,7 @@ const TreeNode = (props) => {
 							<div className={styles.name}>{data.name}</div>
 							<div className={styles.buttons}>
 								{hasChild && <button className={styles.expandCollapseBtn} onClick={() => setExpanded(!expanded)}>{expanded ? 'Collapse' : 'Expand'}</button>}
-								<OptionsMenu />
+								<OptionsMenu optionHandler={optionHandler} />
 							</div>
 						</div>
 					</td>
@@ -48,15 +69,17 @@ const TreeNode = (props) => {
 						<td className={styles.leftLine}></td>
 					</tr>)}
 					<tr className={styles.childrenContainer}>
-						{data.children.map((val) => {
-							return (<td colSpan="2" key={val.name}>
-								<TreeNode key={val.name} data={val} />
+						{data.child_ids && data.child_ids.map((val) => {
+							return (<td colSpan="2" key={val}>
+								<TreeNode data={membersMap[val]} membersMap={membersMap} />
 							</td>);
 						})}
 					</tr>
 				</>)}
 			</tbody>
-		</table>)
+		</table>
+		</>
+	);
 }
 
 export default TreeNode;

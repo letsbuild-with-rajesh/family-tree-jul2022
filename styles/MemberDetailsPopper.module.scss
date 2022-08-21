@@ -38,5 +38,21 @@
 .genderRow {
 	& > span > span {
 		padding-right: 8px;
-	}	
+	}
+	& > span {
+		display: block;
+		margin-top: 8px;
+	}
+}
+
+.submitBtn {
+	display: flex;
+	justify-content: space-around;
+	button {
+		margin-top: 8px;
+	}
+}
+
+.required {
+	color: red;
 }

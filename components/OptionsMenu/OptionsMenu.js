@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../styles/OptionsMenu.module.scss';
 
-const OptionsMenu = () => {
+const OptionsMenu = (props) => {
 	const [optionsOpen, setOptionsOpen] = useState(false);
 	const ref = useRef(null);
+
+	const { optionHandler } = props;
 
 	const handleOutsideClick = (event) => {
     if (ref.current && !ref.current.contains(event.target)) {
 			setOptionsOpen(false);
+			optionHandler();
     }
   };
 
@@ -21,9 +24,9 @@ const OptionsMenu = () => {
 			<button className={styles.moreBtn} onClick={() => { setOptionsOpen(open => !open) }}>More</button>
 			{optionsOpen && (
 				<div onClick={() => { setOptionsOpen(false) }} className={styles.moreBtnContent}>
-					<div>Add</div>
-					<div>Edit</div>
-					<div>Delete</div>
+					<div onClick={() => optionHandler('add')}>Add</div>
+					<div onClick={() => optionHandler('edit')}>Edit</div>
+					<div onClick={() => optionHandler('delete')}>Delete</div>
 				</div>
 			)}
 		</span>
