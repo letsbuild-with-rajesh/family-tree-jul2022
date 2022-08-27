@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import styles from '../../styles/MemberDetailsPopper.module.scss';
 import { addChild, updateMember } from './utils';
 
@@ -18,20 +18,20 @@ const MemberDetailsPopper = (props) => {
 		return `${dateArr[2]}-${dateArr[1]}-${dateArr[0]}`;
 	}
 
-	const fillFormForEdit = (data) => {
+	const fillFormForEdit = useCallback((data) => {
 		setName(data.name);
 		setGender(data.gender);
 		setAddSpouseClicked(data.spouse_name !== '');
 		setSpouseName(data.spouse_name);
 		setSpouseGender(data.spouse_gender);
 		setDob(reverseDateFormat(data.dob));
-	}
+	}, []);
 
 	useEffect(() => {
 		if (type === 'edit') {
 			fillFormForEdit(sourceMember);
 		}
-	}, [type, sourceMember]);
+	}, [type, sourceMember, fillFormForEdit]);
 
 	const resetFormAndClose = () => {
 		setName('');
@@ -107,11 +107,11 @@ const MemberDetailsPopper = (props) => {
 						addSpouseClicked && (
 							<>
 								<div>
-									<label>Spouse's Name{requiredAsterisk}:</label>
+									<label>Spouse&apos;s Name{requiredAsterisk}:</label>
 									<input type="text" value={spouseName} onChange={(e) => { setSpouseName(e.target.value) }} required/>
 								</div>
 								<div className={styles.genderRow}>
-									<label>Spouse's Gender{requiredAsterisk}:</label>
+									<label>Spouse&apos;s Gender{requiredAsterisk}:</label>
 									<select onChange={(e) => setSpouseGender(e.target.value)} value={spouseGender} required>
 										{spouseGender === '' && <option value="">Select a gender</option>}
 										<option value="male">Male</option>

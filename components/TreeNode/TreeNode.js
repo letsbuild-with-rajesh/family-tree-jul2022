@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image'
 import MemberDetailsPopper from '../MemberDetailsPopper';
 import OptionsMenu from '../OptionsMenu';
 import styles from '../../styles/TreeNode.module.scss';
@@ -42,7 +43,7 @@ const TreeNode = (props) => {
 			<tbody>
 				<tr className={styles.contentContainer}>
 					<td className={styles.content} style={randomColor}>
-						<div className={styles.picture}><img src="" /></div>
+						<div className={styles.picture}><Image src="" /></div>
 						<div className={styles.contentDescription}>
 							<div className={styles.name}>{data.name}</div>
 							<div className={styles.buttons}>

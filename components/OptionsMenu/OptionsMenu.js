@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../../styles/OptionsMenu.module.scss';
 
 const OptionsMenu = (props) => {
@@ -7,17 +7,17 @@ const OptionsMenu = (props) => {
 
 	const { optionHandler } = props;
 
-	const handleOutsideClick = (event) => {
+	const handleOutsideClick = useCallback((event) => {
     if (ref.current && !ref.current.contains(event.target)) {
 			setOptionsOpen(false);
 			optionHandler();
     }
-  };
+  }, [ref, optionHandler]);
 
 	useEffect(()=>{
 		document.addEventListener('click', handleOutsideClick, true);
 		return () => document.removeEventListener('click', handleOutsideClick, true);
-	}, []);
+	}, [handleOutsideClick]);
 
 	return (
 		<span ref={ref}>
