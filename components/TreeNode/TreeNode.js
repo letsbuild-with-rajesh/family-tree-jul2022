@@ -43,7 +43,7 @@ const TreeNode = (props) => {
 			<tbody>
 				<tr className={styles.contentContainer}>
 					<td className={styles.content} style={randomColor}>
-						<div className={styles.picture}><Image src="" /></div>
+						<div className={styles.picture}><Image width="100%" height="100%" src="assets/grey-fill.png" /></div>
 						<div className={styles.contentDescription}>
 							<div className={styles.name}>{data.name}</div>
 							<div className={styles.buttons}>

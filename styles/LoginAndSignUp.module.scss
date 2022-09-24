@@ -1,0 +1,39 @@
+.container {
+	background-color: #fefefe;
+	margin: auto;
+	border: 1px solid #888;
+	border-radius: 8px;
+	max-width: 80%;
+	padding: 16px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+	& > form > div {
+		padding: 8px 0px;
+	}
+	h3 {
+		margin-top: 0px;
+		margin-bottom: 4px;
+	}
+	form {
+		label {
+			padding-right: 8px;
+		}
+		input {
+			float: right;
+		}
+		a {
+			text-decoration: underline;
+			font-size: small;
+		}
+	}
+}
+
+.submitBtns {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}

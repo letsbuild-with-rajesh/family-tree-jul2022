@@ -1,5 +1,7 @@
 import { doc, collection, addDoc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../utils/firebaseSetup';
+import { initFirebaseApp } from '../../utils/firebaseSetup';
+
+const db = initFirebaseApp();
 
 const getMemberData = async (id) => {
 	try {
