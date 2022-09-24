@@ -1,3 +1,3 @@
-import LoginAndSignUp from './LoginAndSignUp';
+import LoginAndSignUp from "./LoginAndSignUp";
 
 export default LoginAndSignUp;

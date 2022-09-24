@@ -1,3 +1,3 @@
-import MemberDetailsPopper from './MemberDetailsPopper';
+import MemberDetailsPopper from "./MemberDetailsPopper";
 
 export default MemberDetailsPopper;
