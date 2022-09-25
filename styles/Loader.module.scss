@@ -1,0 +1,32 @@
+@import '_common.scss';
+
+.overlay {
+	min-width: 100vw;
+	min-height: 100vh;
+	background-color: rgba(0, 0, 0, 0.6);
+	position: absolute;
+	@include flex-center;
+	span {
+		font-weight: 400;
+		font-size: x-large;
+		color: white;
+		border: 1px solid white;
+		border-radius: 16px;
+		margin-top: 16px;
+		padding: 6px;
+	}
+}
+
+.loader {
+  border: 8px solid ;
+  border-radius: 50%;
+  border-top: 8px solid #3498db;
+  width: 64px;
+  height: 64px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

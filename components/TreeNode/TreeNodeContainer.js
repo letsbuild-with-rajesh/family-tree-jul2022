@@ -33,7 +33,9 @@ const TreeNodeContainer = () => {
     });
     addAuthStateObserver(
       (user) => setUserEmail(user.email),
-      () => (window.location.href = "/login")
+      () => {
+        /* Signed Out */
+      }
     );
   }, []);
 

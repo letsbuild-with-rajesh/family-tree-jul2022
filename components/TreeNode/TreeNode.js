@@ -12,7 +12,6 @@ const TreeNode = (props) => {
 
   const [expanded, setExpanded] = useState(true);
   const [randomColor, setRandomColor] = useState({});
-  const [selectedMoreOption, setSelectedMoreOption] = useState("");
   const [showMemberDetailsPopup, setShowMemberDetailsPopup] = useState({
     open: false,
     type: "",
@@ -25,7 +24,6 @@ const TreeNode = (props) => {
   }, []);
 
   const optionHandler = (option = "clear") => {
-    setSelectedMoreOption(option === "clear" ? "" : option);
     if (["add", "edit"].includes(option)) {
       setShowMemberDetailsPopup({ open: true, type: option });
     }

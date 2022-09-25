@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
+  sendEmailVerification,
   sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
@@ -30,26 +31,36 @@ const handleErrors = (error) => {
   alert(alertMsg);
 };
 
-export const signUp = async (email, password, cb) => {
+export const signUp = async (email, password, successCb, failureCb) => {
   const auth = getAuth();
   await setPersistence(auth, browserSessionPersistence);
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      cb();
+  await createUserWithEmailAndPassword(auth, email, password)
+    .then(async () => {
+      const user = auth.currentUser;
+      await auth.signOut();
+      sendEmailVerification(user);
+      successCb();
     })
     .catch((error) => {
+      failureCb();
       handleErrors(error);
     });
 };
 
-export const signIn = async (email, password, cb) => {
+export const signIn = async (email, password, successCb, failureCb) => {
   const auth = getAuth();
   await setPersistence(auth, browserSessionPersistence);
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      cb();
+    .then(async () => {
+      const user = auth.currentUser;
+      await auth.signOut();
+      if (!user.emailVerified) {
+        alert("Please verify email before sign in!");
+      }
+      successCb();
     })
     .catch((error) => {
+      failureCb();
       handleErrors(error);
     });
 };
@@ -76,13 +87,14 @@ export const addAuthStateObserver = (cbIfSignedIn, cbIfNotSignedIn) => {
   });
 };
 
-export const sendPasswordResetUrl = (email, cb) => {
+export const sendPasswordResetUrl = (email, successCb, failureCb) => {
   const auth = getAuth();
   sendPasswordResetEmail(auth, email)
     .then(() => {
-      cb();
+      successCb();
     })
     .catch((error) => {
+      failureCb();
       handleErrors(error);
     });
 };

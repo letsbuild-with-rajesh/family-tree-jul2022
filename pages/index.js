@@ -1,4 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import TreeNode from "../components/TreeNode";
+import LoginAndSignUp from "../components/LoginAndSignUp";
 import { initFirebaseApp } from "../utils/firebaseSetup";
 import { addAuthStateObserver } from "../components/LoginAndSignUp/utils";
 
@@ -12,11 +16,27 @@ const style = {
 initFirebaseApp();
 
 export default function Home() {
+  const [authLoaded, setAuthLoaded] = useState(false);
+  const [landingPage, setLandingPage] = useState("");
+
+  const handleDisplayPage = (page) => {
+    setAuthLoaded(true);
+    setLandingPage(page);
+  };
   useEffect(() => {
     addAuthStateObserver(
-      () => (window.location.href = "/familytree"),
-      () => (window.location.href = "/login")
+      () => handleDisplayPage("familytree"),
+      () => handleDisplayPage("login")
     );
   }, []);
-  return <div style={style}>Please wait...</div>;
+
+  if (!authLoaded) {
+    return <Loader text="" />;
+  }
+  return (
+    <div>
+      <Header />
+      {landingPage === "familytree" ? <TreeNode /> : <LoginAndSignUp />}
+    </div>
+  );
 }
