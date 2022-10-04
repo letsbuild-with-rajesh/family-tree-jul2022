@@ -1,6 +1,8 @@
 import React, { useCallback, useState, useEffect } from "react";
+import Image from "next/image";
+import Loader from "../Loader";
 import styles from "../../styles/MemberDetailsPopper.module.scss";
-import { addMember, updateMember } from "./utils";
+import { addMember, deletePicture, updateMember, uploadPicture } from "./utils";
 
 const MemberDetailsPopper = (props) => {
   const [name, setName] = useState("");
@@ -9,7 +11,8 @@ const MemberDetailsPopper = (props) => {
   const [spouseName, setSpouseName] = useState("");
   const [spouseGender, setSpouseGender] = useState("");
   const [dob, setDob] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photoFile, setPhotoFile] = useState("");
+  const [loader, setLoader] = useState({ show: false, text: "" });
 
   const { open, onClose, type, sourceMember } = props;
 
@@ -40,7 +43,7 @@ const MemberDetailsPopper = (props) => {
     setSpouseName("");
     setSpouseGender("");
     setDob("");
-    setPhoto("");
+    setPhotoFile("");
     onClose();
   };
 
@@ -57,7 +60,6 @@ const MemberDetailsPopper = (props) => {
           name,
           gender,
           dob: reverseDateFormat(dob),
-          photo,
           child_ids: [],
           parent_ids: sourceMember ? [sourceMember.id] : [],
           spouse_name: addSpouseClicked ? spouseName : "",
@@ -66,18 +68,34 @@ const MemberDetailsPopper = (props) => {
         if (!sourceMember) {
           payload.root_member = true;
         }
+
+        setLoader({ show: true, text: "Adding member..." });
+        if (photoFile !== "") {
+          const fileUploaded = await uploadPicture(photoFile);
+          payload.photoName = fileUploaded.fileName;
+          payload.photoUrl = fileUploaded.url;
+        }
         await addMember(sourceMember ? sourceMember.id : null, payload);
+        setLoader({ show: false, text: "" });
       }
       if (type === "edit") {
         const payload = {
           name,
           gender,
           dob: reverseDateFormat(dob),
-          photo,
           spouse_name: addSpouseClicked ? spouseName : "",
           spouse_gender: addSpouseClicked ? spouseGender : "",
         };
-        await updateMember(sourceMember.id, payload);
+
+        setLoader({ show: true, text: "Updating member..." });
+        if (photoFile !== "") {
+          deletePicture(sourceMember.photoName);
+          const fileUploaded = await uploadPicture(photoFile);
+          payload.photoName = fileUploaded.fileName;
+          payload.photoUrl = fileUploaded.url;
+        }
+        await updateMember(sourceMember ? sourceMember.id : null, payload);
+        setLoader({ show: false, text: "" });
       }
       resetFormAndClose();
     }
@@ -166,14 +184,31 @@ const MemberDetailsPopper = (props) => {
             />
           </div>
           <div>
-            <label>Photo:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                setPhoto(e.target.files[0]);
-              }}
-            />
+            {type === "edit" && (
+              <>
+                <label>Photo:</label>
+                <Image
+                  width="100%"
+                  height="100%"
+                  src={
+                    sourceMember.photoUrl
+                      ? sourceMember.photoUrl
+                      : "assets/grey-fill.png"
+                  }
+                  alt="Profile picture"
+                />
+              </>
+            )}
+            <div>
+              <label>{type === "edit" ? "Change Photo" : "Photo"}:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  setPhotoFile(e.target.files[0]);
+                }}
+              />
+            </div>
           </div>
           <div className={styles.submitBtn}>
             <button type="submit" onClick={submitHandler}>
@@ -185,6 +220,7 @@ const MemberDetailsPopper = (props) => {
           </div>
         </form>
       </div>
+      {loader.show && <Loader text={loader.text} />}
     </div>
   );
 };

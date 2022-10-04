@@ -1,5 +1,5 @@
-@import '_common.scss';
-@import '_treeNodeCommon.scss';
+@import "_common.scss";
+@import "_treeNodeCommon.scss";
 
 .rootContainer {
 	@include flex-center;
@@ -21,7 +21,9 @@
 	cursor: pointer;
 }
 
-.container, .contentContainer, .childrenLineContainer {
+.container,
+.contentContainer,
+.childrenLineContainer {
 	@include flex-center;
 }
 
@@ -58,6 +60,8 @@
 	.buttons {
 		position: relative;
 		margin-top: 4px;
+		display: flex;
+		justify-content: center;
 	}
 }
 
@@ -90,8 +94,7 @@ $lineBorder: 1px solid black;
 	}
 }
 
-.expandCollapseBtn { 
+.expandCollapseBtn {
 	margin: 0px 2px;
 	cursor: pointer;
 }
-

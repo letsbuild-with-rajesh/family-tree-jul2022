@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   doc,
   collection,
@@ -7,14 +8,50 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
+import { handleErrors } from "../../utils/util";
 
 const db = initFirebaseApp();
 
-export const getMembersColPath = () => {
+const getPhotoFilenamePath = (fileName) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  return "images/user/" + user.uid + "/" + fileName;
+};
+
+const getMembersColPath = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   return "users/" + user.uid + "/family-members";
+};
+
+export const deletePicture = async (fileName) => {
+  try {
+    const storage = getStorage();
+    const storageRef = ref(storage, getPhotoFilenamePath(fileName));
+    await deleteObject(storageRef);
+  } catch (err) {
+    handleErrors(err);
+  }
+};
+
+export const uploadPicture = async (file) => {
+  try {
+    const storage = getStorage();
+    const fileName = uuidv4() + "_" + file.name;
+    const storageRef = ref(storage, getPhotoFilenamePath(fileName));
+    await uploadBytes(storageRef, file);
+    return { fileName, url: await getDownloadURL(storageRef) };
+  } catch (err) {
+    handleErrors(err);
+  }
 };
 
 const getMemberData = async (id) => {
@@ -27,7 +64,7 @@ const getMemberData = async (id) => {
       throw Error("Snap of doc does not exist!");
     }
   } catch (err) {
-    console.error(err);
+    handleErrors(err);
   }
 };
 
@@ -41,7 +78,7 @@ export const addMember = async (parentId, payload) => {
       });
     }
   } catch (err) {
-    console.error(err);
+    handleErrors(err);
   }
 };
 
@@ -50,7 +87,7 @@ export const updateMember = async (id, payload) => {
     const [docRef] = await getMemberData(id);
     await updateDoc(docRef, payload);
   } catch (err) {
-    console.error(err);
+    handleErrors(err);
   }
 };
 
@@ -65,7 +102,7 @@ export const deleteMember = async (id) => {
       });
       await deleteDoc(docRef);
     } catch (err) {
-      console.error(err);
+      handleErrors(err);
     }
   };
   try {
@@ -79,6 +116,6 @@ export const deleteMember = async (id) => {
     });
     deleteChildrenRecursively(id);
   } catch (err) {
-    console.error(err);
+    handleErrors(err);
   }
 };

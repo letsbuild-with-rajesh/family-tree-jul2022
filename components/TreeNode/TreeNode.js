@@ -48,12 +48,15 @@ const TreeNode = (props) => {
                 <Image
                   width="100%"
                   height="100%"
-                  src="assets/grey-fill.png"
+                  src={data.photoUrl ? data.photoUrl : "assets/grey-fill.png"}
                   alt="Profile picture"
                 />
               </div>
               <div className={styles.contentDescription}>
-                <div className={styles.name}>{data.name}</div>
+                <div className={styles.name}>
+                  {data.name}
+                  {data.spouse_name ? ` & ${data.spouse_name}` : ""}
+                </div>
                 <div className={styles.buttons}>
                   {hasChild && (
                     <button

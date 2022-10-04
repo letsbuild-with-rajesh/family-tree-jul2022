@@ -11,26 +11,9 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
+import { handleErrors } from "../../utils/util";
 
 const db = initFirebaseApp();
-
-const handleErrors = (error) => {
-  console.log(error);
-  let alertMsg = "Something went wrong! Please try again later.";
-  if (error.code === "auth/user-not-found") {
-    alertMsg = "No user with the provided Email Id exist! Please sign up.";
-  }
-  if (
-    error.code === "auth/invalid-email" ||
-    error.code === "auth/wrong-password"
-  ) {
-    alertMsg = "Invalid Credentials";
-  }
-  if (error.code === "auth/email-already-in-use") {
-    alertMsg = "Email Id already exists! Please Sign in.";
-  }
-  alert(alertMsg);
-};
 
 export const signUp = async (email, password, successCb, failureCb) => {
   const auth = getAuth();
@@ -74,7 +57,7 @@ export const signOut = () => {
       // signed out
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
