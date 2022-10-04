@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import styles from "../../styles/MemberDetailsPopper.module.scss";
-import { addChild, updateMember } from "./utils";
+import { addMember, updateMember } from "./utils";
 
 const MemberDetailsPopper = (props) => {
   const [name, setName] = useState("");
@@ -59,11 +59,14 @@ const MemberDetailsPopper = (props) => {
           dob: reverseDateFormat(dob),
           photo,
           child_ids: [],
-          parent_ids: [sourceMember.id],
+          parent_ids: sourceMember ? [sourceMember.id] : [],
           spouse_name: addSpouseClicked ? spouseName : "",
           spouse_gender: addSpouseClicked ? spouseGender : "",
         };
-        await addChild(sourceMember.id, payload);
+        if (!sourceMember) {
+          payload.root_member = true;
+        }
+        await addMember(sourceMember ? sourceMember.id : null, payload);
       }
       if (type === "edit") {
         const payload = {

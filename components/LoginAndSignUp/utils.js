@@ -9,9 +9,10 @@ import {
   signInWithEmailAndPassword,
   signOut as signOutFirebase,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
 
-initFirebaseApp();
+const db = initFirebaseApp();
 
 const handleErrors = (error) => {
   console.log(error);
@@ -38,6 +39,7 @@ export const signUp = async (email, password, successCb, failureCb) => {
     .then(async () => {
       const user = auth.currentUser;
       await auth.signOut();
+      await setDoc(doc(db, "users", user.uid), {});
       sendEmailVerification(user);
       successCb();
     })
@@ -53,8 +55,8 @@ export const signIn = async (email, password, successCb, failureCb) => {
   signInWithEmailAndPassword(auth, email, password)
     .then(async () => {
       const user = auth.currentUser;
-      await auth.signOut();
       if (!user.emailVerified) {
+        await auth.signOut();
         alert("Please verify email before sign in!");
       }
       successCb();

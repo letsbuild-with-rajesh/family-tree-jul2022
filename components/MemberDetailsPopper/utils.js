@@ -6,13 +6,20 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
 
 const db = initFirebaseApp();
 
+export const getMembersColPath = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  return "users/" + user.uid + "/family-members";
+};
+
 const getMemberData = async (id) => {
   try {
-    const docRef = doc(db, "family-members", id);
+    const docRef = doc(db, getMembersColPath(), id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return [docRef, docSnap.data()];
@@ -24,13 +31,15 @@ const getMemberData = async (id) => {
   }
 };
 
-export const addChild = async (parentId, payload) => {
+export const addMember = async (parentId, payload) => {
   try {
-    const docRef = await addDoc(collection(db, "family-members"), payload);
-    const [parentDocRef, { child_ids }] = await getMemberData(parentId);
-    await updateDoc(parentDocRef, {
-      child_ids: [...child_ids, docRef.id],
-    });
+    const docRef = await addDoc(collection(db, getMembersColPath()), payload);
+    if (parentId) {
+      const [parentDocRef, { child_ids }] = await getMemberData(parentId);
+      await updateDoc(parentDocRef, {
+        child_ids: [...child_ids, docRef.id],
+      });
+    }
   } catch (err) {
     console.error(err);
   }
@@ -48,7 +57,7 @@ export const updateMember = async (id, payload) => {
 export const deleteMember = async (id) => {
   const deleteChildrenRecursively = async (id) => {
     try {
-      const docRef = doc(db, "family-members", id);
+      const docRef = doc(db, getMembersColPath(), id);
       const { child_ids } = (await getMemberData(id))[1];
       // Remove childrens
       child_ids.forEach((id) => {
