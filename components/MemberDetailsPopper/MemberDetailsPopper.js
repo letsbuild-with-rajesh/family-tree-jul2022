@@ -89,7 +89,9 @@ const MemberDetailsPopper = (props) => {
 
         setLoader({ show: true, text: "Updating member..." });
         if (photoFile !== "") {
-          deletePicture(sourceMember.photoName);
+          if (sourceMember.photoName) {
+            deletePicture(sourceMember.photoName);
+          }
           const fileUploaded = await uploadPicture(photoFile);
           payload.photoName = fileUploaded.fileName;
           payload.photoUrl = fileUploaded.url;
@@ -184,23 +186,24 @@ const MemberDetailsPopper = (props) => {
             />
           </div>
           <div>
-            {type === "edit" && (
+            {type === "edit" && sourceMember.photoUrl && (
               <>
                 <label>Photo:</label>
                 <Image
                   width="100%"
                   height="100%"
-                  src={
-                    sourceMember.photoUrl
-                      ? sourceMember.photoUrl
-                      : "assets/grey-fill.png"
-                  }
+                  src={sourceMember.photoUrl}
                   alt="Profile picture"
                 />
               </>
             )}
             <div>
-              <label>{type === "edit" ? "Change Photo" : "Photo"}:</label>
+              <label>
+                {type === "edit" && sourceMember.photoUrl
+                  ? "Change Photo"
+                  : "Photo"}
+                :
+              </label>
               <input
                 type="file"
                 accept="image/*"

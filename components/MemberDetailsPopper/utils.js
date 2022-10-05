@@ -95,11 +95,14 @@ export const deleteMember = async (id) => {
   const deleteChildrenRecursively = async (id) => {
     try {
       const docRef = doc(db, getMembersColPath(), id);
-      const { child_ids } = (await getMemberData(id))[1];
+      const { child_ids, photoName } = (await getMemberData(id))[1];
       // Remove childrens
       child_ids.forEach((id) => {
         deleteChildrenRecursively(id);
       });
+      if (photoName) {
+        await deletePicture(photoName);
+      }
       await deleteDoc(docRef);
     } catch (err) {
       handleErrors(err);
