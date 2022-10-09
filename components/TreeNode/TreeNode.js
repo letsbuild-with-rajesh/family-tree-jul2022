@@ -4,24 +4,19 @@ import MemberDetailsPopper from "../MemberDetailsPopper";
 import OptionsMenu from "../OptionsMenu";
 import styles from "../../styles/TreeNode.module.scss";
 import { deleteMember } from "../MemberDetailsPopper/utils";
-import { getRandomColor } from "./utils";
+import { getTreeNodeLevelColor } from "./utils";
 
 const TreeNode = (props) => {
-  const { data, membersMap } = props;
+  const { data, membersMap, level, hideControls } = props;
   const childrenCount = data?.child_ids?.length;
 
   const [expanded, setExpanded] = useState(true);
-  const [randomColor, setRandomColor] = useState({});
   const [showMemberDetailsPopup, setShowMemberDetailsPopup] = useState({
     open: false,
     type: "",
   });
   const hasChild = childrenCount > 0;
   const hasMoreThanOneChild = childrenCount > 1;
-
-  useEffect(() => {
-    setRandomColor(getRandomColor());
-  }, []);
 
   const optionHandler = (option = "clear") => {
     if (["add", "edit"].includes(option)) {
@@ -30,6 +25,39 @@ const TreeNode = (props) => {
     if (option === "delete") {
       deleteMember(data.id);
     }
+  };
+
+  const renderNameAndGender = (details) => {
+    const { name, gender, spouse_name, spouse_gender } = details;
+    const genderObj = {
+      male: { style: styles.genderMale, text: 'M' },
+      female: { style: styles.genderFemale, text: 'F' }
+    };
+    return (
+      <>
+        <span className={styles.name}>
+          {name}&nbsp;
+          <span className={genderObj[gender].style}>({genderObj[gender].text})</span>
+          {spouse_name && (
+            <>
+              {" & "}
+              {spouse_name}&nbsp;
+              <span className={genderObj[spouse_gender].style}>({genderObj[spouse_gender].text})</span>
+            </>
+          )}
+        </span>
+      </>
+    );
+  };
+
+  const getAge = (dateStr) => {
+    const dateArr = dateStr.split("-");
+    const formattedDate = `${dateArr[1]}/${dateArr[0]}/${dateArr[2]}`;
+    const timediffInMilliSecs = Date.now() - new Date(formattedDate).getTime();
+    const timediff = new Date(timediffInMilliSecs);
+    const year = timediff.getUTCFullYear();
+    const age = Math.abs(year - 1970);
+    return age === 0 ? "Less than a year" : age;
   };
 
   return (
@@ -44,21 +72,23 @@ const TreeNode = (props) => {
         <table className={styles.container}>
           <tbody>
             <tr className={styles.contentContainer}>
-              <td className={styles.content} style={randomColor}>
+              <td className={styles.content} style={getTreeNodeLevelColor(level)} >
                 <div className={styles.picture}>
                   <Image
-                    width="100%"
-                    height="100%"
+                    width="120"
+                    height="120"
                     src={data.photoUrl ? data.photoUrl : "assets/grey-fill.png"}
                     alt="Profile picture"
                   />
                 </div>
                 <div className={styles.contentDescription}>
-                  <div className={styles.name}>
-                    {data.name}
-                    {data.spouse_name ? ` & ${data.spouse_name}` : ""}
+                  <div className={styles.contentText}>
+                    <div className={styles.name}>
+                      {renderNameAndGender(data)}
+                    </div>
+                    <div className={styles.age}>Age: {getAge(data.dob)}</div>
                   </div>
-                  <div className={styles.buttons}>
+                  {!hideControls && <div className={styles.buttons}>
                     {hasChild && (
                       <button
                         className={styles.expandCollapseBtn}
@@ -68,7 +98,7 @@ const TreeNode = (props) => {
                       </button>
                     )}
                     <OptionsMenu optionHandler={optionHandler} />
-                  </div>
+                  </div>}
                 </div>
               </td>
             </tr>
@@ -105,6 +135,8 @@ const TreeNode = (props) => {
                           <TreeNode
                             data={membersMap[val]}
                             membersMap={membersMap}
+                            level={level + 1}
+                            hideControls={hideControls}
                           />
                         </td>
                       );

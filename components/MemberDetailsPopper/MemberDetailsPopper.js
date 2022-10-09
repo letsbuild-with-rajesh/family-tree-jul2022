@@ -182,6 +182,7 @@ const MemberDetailsPopper = (props) => {
                 setDob(e.target.value);
               }}
               value={dob}
+              max={new Date().toISOString().split("T")[0]}
               required
             />
           </div>
