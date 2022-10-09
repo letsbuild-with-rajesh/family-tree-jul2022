@@ -29,8 +29,8 @@ export const getTreeNodeLevelColor = (level) => {
 };
 
 export const exportAsImage = async (element, imageFileName) => {
-  const canvas = await html2canvas(element, { scale: 6 });
-  const image = canvas.toDataURL("image/png", 1.0);
+  const canvas = await html2canvas(element, { scale: 6, allowTaint: true, useCORS: true });
+  const image = canvas.toDataURL("image/jpeg", 1.0);
   downloadImage(image, imageFileName);
 };
 

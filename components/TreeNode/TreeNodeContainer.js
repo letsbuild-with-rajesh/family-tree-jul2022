@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs, query, onSnapshot } from "firebase/firestore";
 import TreeNode from "./TreeNode";
 import MemberDetailsPopper from "../MemberDetailsPopper";
+import Loader from "../Loader";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
 import { addAuthStateObserver, signOut } from "../../components/LoginAndSignUp/utils";
 import {
@@ -22,6 +23,7 @@ const TreeNodeContainer = () => {
   const [membersMap, setMembersMap] = useState({});
   const [treesList, setTreesList] = useState([]);
   const [showTreesList, setShowTreesList] = useState(false);
+  const [loader, setLoader] = useState({ show: false, text: "" });
 
   const treeRef = useRef(null);
   const unsubscribeMembersSnapshot = useRef(null);
@@ -98,9 +100,11 @@ const TreeNodeContainer = () => {
   }, []);
 
   useEffect(() => {
+    // Reset hide controls & loader after export
     if (hideControlsBeforeExport) {
       exportAsImage(treeRef.current, "family-tree-1");
       setHideControlsBeforeExport(false);
+      setLoader({ show: false, text: "" });
     }
   }, [hideControlsBeforeExport]);
 
@@ -118,12 +122,14 @@ const TreeNodeContainer = () => {
   }
 
   const triggerExport = () => {
+    setLoader({ show: true, text: "Exporting image..." });
     setHideControlsBeforeExport(true);
   }
 
   const handleAddNewTree = () => {
     const treeName = window.prompt('Please give a name for your tree');
     if (treeName) {
+      setMembersMap({});
       addANewTree(treeName);
     }
   }
@@ -191,6 +197,7 @@ const TreeNodeContainer = () => {
         type="add"
         sourceMember={null}
       />
+      {loader.show && <Loader text={loader.text} />}
     </div>
   );
 };
