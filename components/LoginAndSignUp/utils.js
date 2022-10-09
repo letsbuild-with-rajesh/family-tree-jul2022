@@ -1,16 +1,11 @@
 import {
-  browserSessionPersistence,
-  createUserWithEmailAndPassword,
-  getAuth,
-  onAuthStateChanged,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  setPersistence,
-  signInWithEmailAndPassword,
-  signOut as signOutFirebase,
+  browserSessionPersistence, createUserWithEmailAndPassword, getAuth,
+  onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail,
+  setPersistence, signInWithEmailAndPassword, signOut as signOutFirebase,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
+import { initTreeIfNeeded } from "../TreeNode/utils";
 import { handleErrors } from "../../utils/util";
 
 const db = initFirebaseApp();
@@ -41,7 +36,10 @@ export const signIn = async (email, password, successCb, failureCb) => {
       if (!user.emailVerified) {
         await auth.signOut();
         alert("Please verify email before sign in!");
+        failureCb();
+        return;
       }
+      initTreeIfNeeded();
       successCb();
     })
     .catch((error) => {

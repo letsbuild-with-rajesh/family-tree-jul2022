@@ -1,3 +1,36 @@
+import { doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { initFirebaseApp } from "./firebaseSetup";
+
+const db = initFirebaseApp();
+
+export const getUserDocPath = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  return "users/" + user.uid;
+}
+
+export const getTreesCollectionPath = () => {
+  return getUserDocPath() + "/trees";
+};
+
+export const getActiveTreeDocPath = async () => {
+  try {
+    const docRef = doc(db, getUserDocPath());
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const { active_tree: activeTree } = docSnap.data();
+      return getTreesCollectionPath() + "/" + activeTree;
+    }
+  } catch (err) {
+    handleErrors(err);
+  }
+}
+
+export const getMembersCollectionPath = async () => {
+  return (await getActiveTreeDocPath()) + "/family-members";
+};
+
 export const handleErrors = (error) => {
   console.error(error.code ? error.code : error);
   let alertMsg = "Something went wrong! Please try again later.";

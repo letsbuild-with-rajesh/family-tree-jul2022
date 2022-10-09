@@ -6,13 +6,6 @@ import LoginAndSignUp from "../components/LoginAndSignUp";
 import { initFirebaseApp } from "../utils/firebaseSetup";
 import { addAuthStateObserver } from "../components/LoginAndSignUp/utils";
 
-const style = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100vh",
-};
-
 initFirebaseApp();
 
 export default function Home() {

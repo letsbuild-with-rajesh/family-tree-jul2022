@@ -1,22 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
-import {
-  doc,
-  collection,
-  addDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
-import { handleErrors } from "../../utils/util";
+import { getMembersCollectionPath, handleErrors } from "../../utils/util";
 
 const db = initFirebaseApp();
 
@@ -24,12 +11,6 @@ const getPhotoFilenamePath = (fileName) => {
   const auth = getAuth();
   const user = auth.currentUser;
   return "images/user/" + user.uid + "/" + fileName;
-};
-
-const getMembersColPath = () => {
-  const auth = getAuth();
-  const user = auth.currentUser;
-  return "users/" + user.uid + "/family-members";
 };
 
 export const deletePicture = async (fileName) => {
@@ -56,7 +37,7 @@ export const uploadPicture = async (file) => {
 
 const getMemberData = async (id) => {
   try {
-    const docRef = doc(db, getMembersColPath(), id);
+    const docRef = doc(db, await getMembersCollectionPath(), id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return [docRef, docSnap.data()];
@@ -70,7 +51,7 @@ const getMemberData = async (id) => {
 
 export const addMember = async (parentId, payload) => {
   try {
-    const docRef = await addDoc(collection(db, getMembersColPath()), payload);
+    const docRef = await addDoc(collection(db, await getMembersCollectionPath()), payload);
     if (parentId) {
       const [parentDocRef, { child_ids }] = await getMemberData(parentId);
       await updateDoc(parentDocRef, {
@@ -94,7 +75,7 @@ export const updateMember = async (id, payload) => {
 export const deleteMember = async (id) => {
   const deleteChildrenRecursively = async (id) => {
     try {
-      const docRef = doc(db, getMembersColPath(), id);
+      const docRef = doc(db, await getMembersCollectionPath(), id);
       const { child_ids, photoName } = (await getMemberData(id))[1];
       // Remove childrens
       child_ids.forEach((id) => {
