@@ -35,9 +35,9 @@ export const uploadPicture = async (file) => {
   }
 };
 
-const getMemberData = async (id) => {
+const getMemberData = async (id, treeId = null) => {
   try {
-    const docRef = doc(db, await getMembersCollectionPath(), id);
+    const docRef = doc(db, await getMembersCollectionPath(treeId), id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return [docRef, docSnap.data()];
@@ -72,11 +72,11 @@ export const updateMember = async (id, payload) => {
   }
 };
 
-export const deleteMember = async (id) => {
+export const deleteMember = async (id, treeId = null) => {
   const deleteChildrenRecursively = async (id) => {
     try {
-      const docRef = doc(db, await getMembersCollectionPath(), id);
-      const { child_ids, photoName } = (await getMemberData(id))[1];
+      const docRef = doc(db, await getMembersCollectionPath(treeId), id);
+      const { child_ids, photoName } = (await getMemberData(id, treeId))[1];
       // Remove childrens
       child_ids.forEach((id) => {
         deleteChildrenRecursively(id);
@@ -90,10 +90,10 @@ export const deleteMember = async (id) => {
     }
   };
   try {
-    const { parent_ids } = (await getMemberData(id))[1];
+    const { parent_ids } = (await getMemberData(id, treeId))[1];
     // Remove from parents
     parent_ids.forEach(async (parentId) => {
-      const [parentDocRef, { child_ids }] = await getMemberData(parentId);
+      const [parentDocRef, { child_ids }] = await getMemberData(parentId, treeId);
       await updateDoc(parentDocRef, {
         child_ids: child_ids.filter((childId) => childId !== id),
       });

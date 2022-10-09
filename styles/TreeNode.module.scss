@@ -42,9 +42,18 @@
 
 .treeList {
 	li {
+		padding: 4px;
+	}
+	.treeListName {
 		cursor: pointer;
 		color: blue;
 		text-decoration: underline;
+		margin-right: 32px;
+	}
+	.treeListDeleteIcon {
+		cursor: pointer;
+		color: red;
+		float: right;
 	}
 }
 

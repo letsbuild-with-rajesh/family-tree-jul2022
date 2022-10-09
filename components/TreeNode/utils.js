@@ -1,6 +1,7 @@
-import { collection, doc, addDoc, getDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
 import html2canvas from "html2canvas";
 import { initFirebaseApp } from "../../utils/firebaseSetup";
+import { deleteMember } from '../MemberDetailsPopper/utils';
 import { getTreesCollectionPath, getUserDocPath, handleErrors } from "../../utils/util";
 
 const TREE_NODE_LEVEL_COLORS = [
@@ -29,6 +30,8 @@ export const getTreeNodeLevelColor = (level) => {
 };
 
 export const exportAsImage = async (element, imageFileName) => {
+  /* CORS Policy is manually set to allow for only restricted domain with gsutil
+  External images will not be loaded on localhost exported images. */
   const canvas = await html2canvas(element, { scale: 6, allowTaint: true, useCORS: true });
   const image = canvas.toDataURL("image/jpeg", 1.0);
   downloadImage(image, imageFileName);
@@ -82,6 +85,29 @@ export const renameTree = (id, newName) => {
   try {
     const treeRef = doc(db, getTreesCollectionPath(), id);
     updateDoc(treeRef, { tree_name: newName });
+  } catch (err) {
+    handleErrors(err);
+  }
+}
+
+export const deleteTree = async (id) => {
+  try {
+    const membersRef = query(collection(db, getTreesCollectionPath() + "/" + id + "/family-members"));
+    const membersSnaps = await getDocs(membersRef);
+
+    let rootMemberId = '';
+    membersSnaps.forEach((memberDoc) => {
+      if (memberDoc.exists()) {
+        const { root_member } = memberDoc.data();
+        if (root_member) {
+          rootMemberId = memberDoc.id;
+        }
+      }
+    });
+
+    const treeRef = doc(db, getTreesCollectionPath(), id);
+    await deleteMember(rootMemberId, id);
+    await deleteDoc(treeRef);
   } catch (err) {
     handleErrors(err);
   }

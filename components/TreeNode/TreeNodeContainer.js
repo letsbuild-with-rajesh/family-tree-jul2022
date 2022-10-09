@@ -9,7 +9,7 @@ import {
   getActiveTreeDocPath, getMembersCollectionPath, getTreesCollectionPath,
   getUserDocPath,
 } from "../../utils/util";
-import { addANewTree, exportAsImage, renameTree, setActiveTree as setActiveTreeUtil } from "./utils";
+import { addANewTree, deleteTree, exportAsImage, renameTree, setActiveTree as setActiveTreeUtil } from "./utils";
 import styles from "../../styles/TreeNode.module.scss";
 
 const db = initFirebaseApp();
@@ -151,6 +151,17 @@ const TreeNodeContainer = () => {
     }
   }
 
+  const handleDeleteTree = async (id) => {
+    setLoader({ show: true, text: "Deleting tree..." });
+    setMembersMap({});
+    const newActiveTree = treesList.find((tree) => tree.id !== id);
+    setActiveTreeUtil(newActiveTree.id);
+    await deleteTree(id);
+    await getTrees();
+    setShowTreesList(false);
+    setLoader({ show: false, text: "" });
+  }
+
   return (
     <div className={styles.rootContainer}>
       {hasUserInfo && user.email && (
@@ -166,18 +177,21 @@ const TreeNodeContainer = () => {
             </span>
           </div>
           {!showTreesList && <div className={styles.optionsBtns}>
-            <button onClick={() => setShowTreesList(true)}>Change tree</button>
-            <button onClick={handleRenameTree}>Rename tree</button>
             <button onClick={handleAddNewTree}>Add a new tree</button>
+            {treesList.length > 1 && <button onClick={() => setShowTreesList(true)}>Change/Delete tree</button>}
+            <button onClick={handleRenameTree}>Rename tree</button>
             {hasTreeAtleastOneMember && <button onClick={triggerExport}>Export as image</button>}
           </div>}
         </div>
       )}
       {showTreesList && <>
-        <div>Change Tree</div>
+        <div>Change/Delete Tree</div>
         <ul className={styles.treeList}>
           {treesList.map((val) => {
-            return <li key={"tree-name-" + val.id} onClick={() => handleChangeTree(val.id)}>{val.tree_name}</li>
+            return (<li key={"tree-name-" + val.id}>
+              <span className={styles.treeListName} onClick={() => handleChangeTree(val.id)}>{val.tree_name}</span>
+              <span className={styles.treeListDeleteIcon} onClick={() => handleDeleteTree(val.id)}>x</span>
+            </li>);
           })}
         </ul>
       </>}

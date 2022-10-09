@@ -27,7 +27,10 @@ export const getActiveTreeDocPath = async () => {
   }
 }
 
-export const getMembersCollectionPath = async () => {
+export const getMembersCollectionPath = async (treeId = null) => {
+  if (treeId) {
+    return getTreesCollectionPath() + "/" + treeId + "/family-members";
+  }
   return (await getActiveTreeDocPath()) + "/family-members";
 };
 
