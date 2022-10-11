@@ -79,6 +79,8 @@ const TreeNode = (props) => {
                     height="120"
                     src={data.photoUrl ? data.photoUrl : "assets/grey-fill.png"}
                     alt="Profile picture"
+                    layout="fill"
+                    objectFit="contain"
                   />
                 </div>
                 <div className={styles.contentDescription}>

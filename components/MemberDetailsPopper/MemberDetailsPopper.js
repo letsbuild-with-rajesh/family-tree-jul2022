@@ -190,12 +190,16 @@ const MemberDetailsPopper = (props) => {
             {type === "edit" && sourceMember.photoUrl && (
               <>
                 <label>Photo:</label>
-                <Image
-                  width="100%"
-                  height="100%"
-                  src={sourceMember.photoUrl}
-                  alt="Profile picture"
-                />
+                <div className={styles.photo}>
+                  <Image
+                    width="120"
+                    height="120"
+                    src={sourceMember.photoUrl}
+                    alt="Profile picture"
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </div>
               </>
             )}
             <div>
