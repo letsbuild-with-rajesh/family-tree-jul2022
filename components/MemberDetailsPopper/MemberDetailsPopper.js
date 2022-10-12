@@ -112,7 +112,7 @@ const MemberDetailsPopper = (props) => {
   return (
     <div className={styles.overlayContainer}>
       <div className={styles.popperContainer}>
-        <h3>Add a child:</h3>
+        <h3>{type === 'add' ? 'Add a child:' : 'Edit Member'}</h3>
         <form>
           <div className={styles.nameRow}>
             <label>Name{requiredAsterisk}:</label>

@@ -74,14 +74,14 @@ const TreeNode = (props) => {
             <tr className={styles.contentContainer}>
               <td className={styles.content} style={getTreeNodeLevelColor(level)} >
                 <div className={styles.picture}>
-                  <Image
+                  {data.photoUrl && <Image
                     width="120"
                     height="120"
-                    src={data.photoUrl ? data.photoUrl : "assets/grey-fill.png"}
+                    src={data.photoUrl}
                     alt="Profile picture"
                     layout="fill"
                     objectFit="contain"
-                  />
+                  />}
                 </div>
                 <div className={styles.contentDescription}>
                   <div className={styles.contentText}>
@@ -108,25 +108,21 @@ const TreeNode = (props) => {
               <>
                 <tr className={styles.childrenLineContainer}>
                   <td>
-                    <div className={styles.childrenLine}></div>
+                    <div className={styles.childrenLine} />
                   </td>
                 </tr>
                 {hasMoreThanOneChild && (
                   <tr>
-                    <td className={styles.rightLine}></td>
+                    <td className={styles.rightLine} />
                     {[...Array(childrenCount - 1).keys()].map((_, id) => {
                       return (
                         <React.Fragment key={`${data.name}-children-${id}`}>
-                          <td
-                            className={`${styles.topLine} ${styles.leftLine}`}
-                          ></td>
-                          <td
-                            className={`${styles.topLine} ${styles.rightLine}`}
-                          ></td>
+                          <td className={`${styles.topLine} ${styles.leftLine}`} />
+                          <td className={`${styles.topLine} ${styles.rightLine}`} />
                         </React.Fragment>
                       );
                     })}
-                    <td className={styles.leftLine}></td>
+                    <td className={styles.leftLine} />
                   </tr>
                 )}
                 <tr className={styles.childrenContainer}>
