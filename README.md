@@ -1,3 +1,5 @@
+Disclaimer: This is a personal project and should NOT be shared as public.
+
 # Family Tree App
 An app to create a family tree(s).
 
