@@ -198,7 +198,11 @@ const TreeNodeContainer = () => {
       {!showTreesList && <div className={styles.treeContent} ref={treeRef}>
         <div className={styles.treeName}>{activeTree && activeTree.tree_name}</div>
         {hasTreeAtleastOneMember ? (
-          <TreeNode data={rootMember} membersMap={membersMap} level={1} hideControls={hideControlsBeforeExport} />
+          <div className="tf-tree tf-custom">
+            <ul>
+              <TreeNode data={rootMember} membersMap={membersMap} level={1} hideControls={hideControlsBeforeExport} />
+            </ul>
+          </div>
         ) : (
           <button onClick={() => setShowAddMemberPopup(true)}>
             Add a member

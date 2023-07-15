@@ -69,81 +69,54 @@ const TreeNode = (props) => {
         sourceMember={data}
       />
       {data && (
-        <table className={styles.container}>
-          <tbody>
-            <tr className={styles.contentContainer}>
-              <td className={styles.content} style={getTreeNodeLevelColor(level)} >
-                <div className={styles.picture}>
-                  {data.photoUrl && <Image
-                    width="120"
-                    height="120"
-                    src={data.photoUrl}
-                    alt="Profile picture"
-                    layout="fill"
-                    objectFit="contain"
-                  />}
+        <li >
+          <span className={`${styles.content} tf-nc`} style={getTreeNodeLevelColor(level)}>
+            <div className={styles.picture}>
+              {data.photoUrl && <Image
+                width="120"
+                height="120"
+                src={data.photoUrl}
+                alt="Profile picture"
+                layout="fill"
+                objectFit="contain"
+              />}
+            </div>
+            <div className={styles.contentDescription}>
+              <div className={styles.contentText}>
+                <div className={styles.name}>
+                  {renderNameAndGender(data)}
                 </div>
-                <div className={styles.contentDescription}>
-                  <div className={styles.contentText}>
-                    <div className={styles.name}>
-                      {renderNameAndGender(data)}
-                    </div>
-                    <div className={styles.age}>Age: {getAge(data.dob)}</div>
-                  </div>
-                  {!hideControls && <div className={styles.buttons}>
-                    {hasChild && (
-                      <button
-                        className={styles.expandCollapseBtn}
-                        onClick={() => setExpanded(!expanded)}
-                      >
-                        {expanded ? "Collapse" : "Expand"}
-                      </button>
-                    )}
-                    <OptionsMenu optionHandler={optionHandler} />
-                  </div>}
-                </div>
-              </td>
-            </tr>
-            {expanded && hasChild && (
-              <>
-                <tr className={styles.childrenLineContainer}>
-                  <td>
-                    <div className={styles.childrenLine} />
-                  </td>
-                </tr>
-                {hasMoreThanOneChild && (
-                  <tr>
-                    <td className={styles.rightLine} />
-                    {[...Array(childrenCount - 1).keys()].map((_, id) => {
-                      return (
-                        <React.Fragment key={`${data.name}-children-${id}`}>
-                          <td className={`${styles.topLine} ${styles.leftLine}`} />
-                          <td className={`${styles.topLine} ${styles.rightLine}`} />
-                        </React.Fragment>
-                      );
-                    })}
-                    <td className={styles.leftLine} />
-                  </tr>
+                <div className={styles.age}>Age: {getAge(data.dob)}</div>
+              </div>
+              {!hideControls && <div className={styles.buttons}>
+                {hasChild && (
+                  <button
+                    className={styles.expandCollapseBtn}
+                    onClick={() => setExpanded(!expanded)}
+                  >
+                    {expanded ? "Collapse" : "Expand"}
+                  </button>
                 )}
-                <tr className={styles.childrenContainer}>
-                  {data.child_ids &&
-                    data.child_ids.map((val) => {
-                      return (
-                        <td colSpan="2" key={val}>
-                          <TreeNode
-                            data={membersMap[val]}
-                            membersMap={membersMap}
-                            level={level + 1}
-                            hideControls={hideControls}
-                          />
-                        </td>
-                      );
-                    })}
-                </tr>
-              </>
-            )}
-          </tbody>
-        </table>
+                <OptionsMenu optionHandler={optionHandler} />
+              </div>}
+            </div>
+          </span>
+          {expanded && hasChild && (
+            <ul className={styles.childrenContainer}>
+              {data.child_ids &&
+                data.child_ids.map((val) => {
+                  return (
+                    <TreeNode
+                      data={membersMap[val]}
+                      membersMap={membersMap}
+                      level={level + 1}
+                      hideControls={hideControls}
+                    />
+                  );
+                })}
+            </ul>
+          )}
+        </li>
       )}
     </>
   );

@@ -1,5 +1,3 @@
-Disclaimer: This is a personal project and should NOT be shared as public.
-
 # Family Tree App
 An app to create a family tree(s).
 
@@ -10,8 +8,9 @@ An app to create a family tree(s).
 - Secure email verified sign up
 
 ### Developed on
-- Next.js - React.js + Node.js
+- Next.js
 - Firebase - With Auth, Database & Storage integrations
+- Treeflex - For building tree
 - html2canvas for image export
 - Sass
 

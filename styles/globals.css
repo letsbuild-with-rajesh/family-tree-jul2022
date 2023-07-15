@@ -14,3 +14,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.tf-custom.tf-tree {
+  overflow: visible;
+}
+
+.tf-custom .tf-nc {
+  display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+  border: none;
+}

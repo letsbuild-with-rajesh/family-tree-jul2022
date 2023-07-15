@@ -58,16 +58,6 @@
 	}
 }
 
-.container,
-.contentContainer,
-.childrenLineContainer {
-	@include flex-center;
-}
-
-.container {
-	border-collapse: collapse;
-}
-
 .content {
 	@include flex-center;
 	padding: 8px;
@@ -92,9 +82,6 @@
 .contentDescription {
 	width: max-content;
 	padding-left: 4px;
-	& > span:first-child {
-		padding-right: 4px;
-	}
 	.contentText {
 		padding: 4px 0px;
 	}
@@ -124,35 +111,6 @@
 		margin-top: 4px;
 		display: flex;
 		justify-content: center;
-	}
-}
-
-.childrenLine {
-	@include bg-black;
-	height: 36px;
-	width: 1px;
-	margin-bottom: -1px;
-}
-
-$lineBorder: 1px solid black;
-
-.leftLine {
-	border-left: $lineBorder;
-	height: 36px;
-}
-
-.rightLine {
-	border-right: $lineBorder;
-	height: 36px;
-}
-
-.topLine {
-	border-top: $lineBorder;
-}
-
-.childrenContainer {
-	td {
-		vertical-align: top;
 	}
 }
 
